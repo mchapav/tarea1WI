@@ -9,20 +9,5 @@ import csv
 # Abrir archivos
 ##########################################
 
-try:
-    relations = pd.read.csv("data/relations5.csv")
-
-
-
-
-
-
-##########################################
-#  Creación de Grafo
-##########################################
-#G = DiGraph()
-#i=1
-#with open("relation5.csv") as file:
- #   reader = pd.read.csv(file)
-
+relation = pd.read_csv("data/relation5.csv")
 
