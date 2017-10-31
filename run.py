@@ -3,9 +3,8 @@
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
-from networkx_viewer import Viewer
-import threading
-import csv
+
+
 
 
 
@@ -15,7 +14,7 @@ import csv
 
 relation = pd.read_csv("data/relation5.csv", sep = ";") #user_id , rel
 
-subrelation = relation.sample(n=1000)
+subrelation = relation.sample(n=10000)
 
 G= nx.DiGraph()
 
