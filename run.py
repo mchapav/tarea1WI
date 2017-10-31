@@ -14,14 +14,12 @@ import matplotlib.pyplot as plt
 
 relation = pd.read_csv("data/relation5.csv", sep = ";") #user_id , rel
 
-subrelation = relation.sample(n=10000)
-
 G= nx.DiGraph()
 
-for index, row in subrelation.iterrows():
+for index, row in relation.iterrows():
     G.add_node(int(row["user_id"]))
 
-for index, row in subrelation.iterrows():
+for index, row in relation.iterrows():
     if isinstance(row["rel"],str):
         rels = row["rel"].split(" ")
         for x in rels:
@@ -29,7 +27,14 @@ for index, row in subrelation.iterrows():
             if(G.has_node(x)):
                 G.add_edge(row["user_id"], x)
 
-nx.draw(G)
-plt.show()
+#nx.draw(G.subgraph[0:1000])
+#plt.show()
 
-#Comentario agregado
+
+pr = nx.pagerank(G, alpha = 0.9)
+sr = sorted(pr, key=pr.get, reverse=True)[:10]
+
+i = 1
+for a in sr:
+    print("#%s. %s -> %s." % (i,a,pr[a]))
+    i+=1
