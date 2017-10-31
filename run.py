@@ -32,5 +32,3 @@ for index, row in subrelation.iterrows():
 
 nx.draw(G)
 plt.show()
-
-#Comentario agregado
