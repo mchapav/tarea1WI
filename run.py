@@ -158,3 +158,39 @@ plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
 
 print("Los parametros ax+b de la regresión son:\n a: %s y b:%s"%(fit[0]+fit[1]))
 plt.show()
+
+###############################################################
+# Diccionarios usuario con nombre, tweets, rtweets y menciones
+###############################################################
+tweets = pd.read_csv("data/tweets5.csv", sep = ";") #id	twitter_id	user_id	text
+users = pd.read_csv("data/users5.csv", sep = ";") #twitter_id	name	screename	description	followerscount	createdat
+
+# Número de tweets en el juego de datos.
+# Número de retweets promedio.
+# Respuestas y menciones.
+
+class Usuarios():
+
+    def __init__(self):
+        self.user = {} #Guarda el nombre de usuario de twitter asociado al ID usuario
+        self.ntwt = {} #Guarda la cantidad de tweets asociados al ID usuario
+        self.nrt = {} #Guarda la cantidad de rtweets asociados al ID usuario
+        self.nment = {} #Guarda la cantidad de menciones asociados al ID usuario
+
+Users = Usuarios()
+
+for row in users.iterrows():
+	if int(row["user_id"]) in G and not int(row["user_id"]) in Users.user.keys():
+	    Users.user[int(row["user_id"])]= "@"+row["screename"]
+
+for key in Users.user.keys():
+	Users.ntwt[key] = 0
+	Users.nrt[key] = 0
+	Users.nment[key] = 0
+	for row in tweets.iterrows():
+		if key == int(row["user_id"]):
+			Users.ntwt[key] += 1 
+		if "rt "+User.user[key]+":" in row["text"]: #Considera el formato de retweet "rt @user_name:"
+			Users.nrt[key] += 1
+		if User.user[key] in row["text"] and not "rt "+User.user[key]+":" in row["text"]: #Menciones sin considerar retweets
+			Users.nment[key] += 1 
