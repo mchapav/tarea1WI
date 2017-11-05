@@ -156,5 +156,5 @@ plt.plot(nprl, fit[0]*nprl + fit[1], 'r-')
 # Se definen ejes
 plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
 
-print("Los parametros ax+b de la regresión son:\n a: %s y b:%s"%(fit[0]+fit[1]))
+print("Los parametros ax+b de la regresión son:\n a: %s y b:%s" %(fit[0],fit[1]))
 plt.show()
