@@ -157,8 +157,7 @@ plt.plot(nprl, fit[0]*nprl + fit[1], 'r-')
 # Se definen ejes
 plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
 
-<<<<<<< .merge_file_6Qe9dh
-print("Los parametros ax+b de la regresión son:\n a: %s y b:%s"%(fit[0]+fit[1]))
+print("Los parametros ax+b de la regresión son:\n a: %s y b:%s" %(fit[0],fit[1]))
 plt.show()
 
 ###############################################################
@@ -172,7 +171,6 @@ users = pd.read_csv("data/users5.csv", sep = ";") #twitter_id	name	screename	des
 # Respuestas y menciones.
 
 class Usuarios():
-
     def __init__(self):
         self.user = {} #Guarda el nombre de usuario de twitter asociado al ID usuario
         self.ntwt = {} #Guarda la cantidad de tweets asociados al ID usuario
@@ -181,22 +179,22 @@ class Usuarios():
 
 Users = Usuarios()
 
-for row in users.iterrows():
-	if int(row["user_id"]) in G and not int(row["user_id"]) in Users.user.keys():
-	    Users.user[int(row["user_id"])]= "@"+row["screename"]
+for index, row in users.iterrows():
+    x = int(row["twitter_id"])
+    if(G.has_node(x)):
+        Users.user[x] = "@"+row["screename"]
 
-for key in Users.user.keys():
+for key in Users.user:
 	Users.ntwt[key] = 0
 	Users.nrt[key] = 0
 	Users.nment[key] = 0
-	for row in tweets.iterrows():
+	for index, row in tweets.iterrows():
 		if key == int(row["user_id"]):
 			Users.ntwt[key] += 1 
-		if "rt "+User.user[key]+":" in row["text"]: #Considera el formato de retweet "rt @user_name:"
+		if "rt "+Users.user[key]+":" in row["text"]: #Considera el formato de retweet "rt @user_name:"
 			Users.nrt[key] += 1
-		if User.user[key] in row["text"] and not "rt "+User.user[key]+":" in row["text"]: #Menciones sin considerar retweets
+		if Users.user[key] in row["text"] and not "rt "+Users.user[key]+":" in row["text"]: #Menciones sin considerar retweets
 			Users.nment[key] += 1 
-=======
-print("Los parametros ax+b de la regresión son:\n a: %s y b:%s" %(fit[0],fit[1]))
-plt.show()
->>>>>>> .merge_file_FLCBiU
+
+
+
