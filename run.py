@@ -21,9 +21,10 @@ def get_nodes_at_distance(G, L, level, leng):
                 A[i+1].append(y)
             for y in b:
                 A[i+1].append(y)
+        A[i] = sample(A[i],min(len(A[i]),leng[i]))
     r = []
     for i in range(level):
-        r = r + sample(A[i],min(len(A[i]),leng[i]))
+        r = r + A[i]
     return r
 
 
@@ -118,12 +119,12 @@ for a in sr:
 ##########################################
 
 #Se encuentran los nodos a distancia menor que 3 del usuario con mayor pagerank. Se samplea 1 de distancia 0, 20 de distancia 1 y 400 de distancia 2.
-L =get_nodes_at_distance(G,srt[0:1],3, [1,20,400])
+L =get_nodes_at_distance(G,srt[0:3],3, [3,40,1600])
 
 
 #Se imprime el grafico solo mostrando dichos nodos
-#nx.draw(G.subgraph(L))
-#plt.show()
+nx.draw(G.subgraph(L))
+plt.show()
 
 
 
@@ -156,6 +157,7 @@ plt.plot(nprl, fit[0]*nprl + fit[1], 'r-')
 # Se definen ejes
 plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
 
+<<<<<<< .merge_file_6Qe9dh
 print("Los parametros ax+b de la regresión son:\n a: %s y b:%s"%(fit[0]+fit[1]))
 plt.show()
 
@@ -194,3 +196,7 @@ for key in Users.user.keys():
 			Users.nrt[key] += 1
 		if User.user[key] in row["text"] and not "rt "+User.user[key]+":" in row["text"]: #Menciones sin considerar retweets
 			Users.nment[key] += 1 
+=======
+print("Los parametros ax+b de la regresión son:\n a: %s y b:%s" %(fit[0],fit[1]))
+plt.show()
+>>>>>>> .merge_file_FLCBiU

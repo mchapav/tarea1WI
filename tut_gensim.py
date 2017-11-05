@@ -12,6 +12,9 @@ texts = [text.split() for text in texts]
 dictionary = gensim.corpora.Dictionary(texts)
 #guardamos nuestro diccionario
 dictionary.save('lda/dictionary.dict')
+stoplist = "de en la rt el y su a que un no te si tu con se los las más me the por para una lo como q del le al es o muy - — yo ya and to | of is in mas pero , .".split(" ")
+stop_ids = [dictionary.token2id[stopword] for stopword in stoplist if stopword in dictionary.token2id]
+dictionary.filter_tokens(stop_ids)
 #creamos el corpus para darle al modelo (segun el formato de esta libreria)
 corpus = [dictionary.doc2bow(text) for text in texts]
 
@@ -19,17 +22,18 @@ gensim.corpora.MmCorpus.serialize('lda/corpora.mm',corpus)
 
 
 #modelo LDA
-lda=gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=5, update_every=1, chunksize=1000, passes=1) #Aca se cambia el numero de topicos
+lda=gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=4, update_every=1, chunksize=1000, passes=1) #Aca se cambia el numero de topicos
 
 print(lda.print_topics(100))
 
 #Ahora rescatamos todos los topicos con sus palabras representativas y los guardamos en el archivo topicslda.txt
 #num_topics es el numero de topicos que quiero ver, con -1 los muestra todos, num_words es la cantidad de palabras por topico
 #que quiero ver.
-topics = lda.show_topics(num_topics=-1, num_words=20, log=False, formatted=True) #Aca cambiamos el numero de palabras por topicos
+topics = lda.show_topics(num_topics=4, num_words=20, log=False, formatted=True) #Aca cambiamos el numero de palabras por topicos
+
 f = open('lda/topicslda_5.txt', 'w') #Aca cambiamos el nombre del archivo
 for i, topic in enumerate(topics):
-	f.write('topico ' + str(i)+ '\n')
+	f.write('tópico ' + str(i)+ '\n')
 	topic = topic[1]
 	for palabras in topic.split('+'):
 		f.write((' ').join(palabras.split('*')) + '\n')
