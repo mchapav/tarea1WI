@@ -123,8 +123,8 @@ L =get_nodes_at_distance(G,srt[0:3],3, [3,40,1600])
 
 
 #Se imprime el grafico solo mostrando dichos nodos
-nx.draw(G.subgraph(L))
-plt.show()
+#nx.draw(G.subgraph(L))
+#plt.show()
 
 
 
@@ -151,14 +151,14 @@ fit = np.polyfit(nprl, nsegl, 1)
 
 
 # Se hace un scatterplot entre ambos valores
-plt.scatter(nprl, nsegl)
+#plt.scatter(nprl, nsegl)
 # Se plotea la linea del LM_fit
-plt.plot(nprl, fit[0]*nprl + fit[1], 'r-')
+#plt.plot(nprl, fit[0]*nprl + fit[1], 'r-')
 # Se definen ejes
-plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
+#plt.axis([0, max(PRL)*1.05, 0, max(SEGUIDORESL)*1.05])
 
 print("Los parametros ax+b de la regresión son:\n a: %s y b:%s" %(fit[0],fit[1]))
-plt.show()
+#plt.show()
 
 ###############################################################
 # Diccionarios usuario con nombre, tweets, rtweets y menciones
@@ -171,30 +171,48 @@ users = pd.read_csv("data/users5.csv", sep = ";") #twitter_id	name	screename	des
 # Respuestas y menciones.
 
 class Usuarios():
-    def __init__(self):
-        self.user = {} #Guarda el nombre de usuario de twitter asociado al ID usuario
-        self.ntwt = {} #Guarda la cantidad de tweets asociados al ID usuario
-        self.nrt = {} #Guarda la cantidad de rtweets asociados al ID usuario
-        self.nment = {} #Guarda la cantidad de menciones asociados al ID usuario
+    def __init__(self,id ,screename=""):
+        self.id = id #Guarda el id
+        self.user = "@"+screename #Guarda el nombre de usuario de twitter asociado al ID usuario
+        self.ntwt = 0 #Guarda la cantidad de tweets asociados al ID usuario
+        self.nrt = 0  #Guarda la cantidad de rtweets asociados al ID usuario
+        self.nment = 0 #Guarda la cantidad de menciones asociados al ID usuario
 
-Users = Usuarios()
+Users = {}
+screenameToId = {}
 
 for index, row in users.iterrows():
     x = int(row["twitter_id"])
     if(G.has_node(x)):
-        Users.user[x] = "@"+row["screename"]
-
-for key in Users.user:
-	Users.ntwt[key] = 0
-	Users.nrt[key] = 0
-	Users.nment[key] = 0
-	for index, row in tweets.iterrows():
-		if key == int(row["user_id"]):
-			Users.ntwt[key] += 1 
-		if "rt "+Users.user[key]+":" in row["text"]: #Considera el formato de retweet "rt @user_name:"
-			Users.nrt[key] += 1
-		if Users.user[key] in row["text"] and not "rt "+Users.user[key]+":" in row["text"]: #Menciones sin considerar retweets
-			Users.nment[key] += 1 
+        screename = row["screename"]
+        Users[x]= Usuarios(id= x, screename = screename)
+        screenameToId[screename]=x
 
 
+for index, row in tweets.iterrows():
+    key = int(row["user_id"])
+    if (not key in Users):
+        Users[key]= Usuarios(id = key)
+    user = Users[key]
+    user.ntwt+= 1
+    text = row["text"].split()
+    if text[0] == "rt":
+        screename =text[1][1:-1]
+        try:
+            Users[screenameToId[screename]].nrt += 1
+        except:
+            pass
+    for word in text[2:]:
+        if word[0]=="@":
+            screename= word[1:]
+            try:
+                Users[screenameToId[screename]].nment +=1
+            except:
+                pass
+
+with open("users.csv",'w') as file:
+    file.write("ID;SCREENAME;NTWT;NRT;NMENT\n")
+    for key in Users:
+        usuario = Users[key]
+        file.write("%s;%s;%s;%s;%s\n" % (usuario.id,usuario.user,usuario.ntwt,usuario.nrt,usuario.nment))
 
