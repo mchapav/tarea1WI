@@ -34,12 +34,14 @@ def get_nodes_at_distance(G, L, level, leng):
 
 relation = pd.read_csv("data/relation5.csv", sep = ";") #user_id , rel
 
+
+#Se utilizan 5000 filas del archivo, por motivos computacionales
 relation = relation.sample(n=5000)
 
 
 
 ##########################################
-# Crear Grafo
+# Agregar Nodos
 ##########################################
 G= nx.DiGraph()
 Cantidad_Seguidores = {}
@@ -55,8 +57,9 @@ print("Nodos creados")
 
 
 i = 0
-
-
+###############################################################
+# Agregar arcos
+###############################################################
 # Por cada nodo fila del archivo se agregan las relaciones y se agregan los nodos que faltan
 for index, row in relation.iterrows():
     if isinstance(row["rel"],str):
@@ -95,22 +98,12 @@ pr = nx.pagerank(G, alpha = 0.9)
 srt = sorted(pr, key=pr.get, reverse=True)[:20]
 
 
-# Se imprimen los 20 mayores pageranks
-i = 1
-for a in srt:
-    print("#%s. %s -> %s. Con %s seguidores." % (i, a, pr[a], Cantidad_Seguidores[a]))
-    i+=1
 
 
 # Se ordenan las "keys" por valor del pagerank en orden creciente y se capturan las 20 primeras
 sr = sorted(pr, key=pr.get, reverse=False)[:20]
 
 
-# Se imprimien los ultimos 20 pageranks
-i = 0
-for a in sr:
-    print("#%s. %s -> %s. Con %s seguidores." % (N_NODOS - i, a, pr[a], Cantidad_Seguidores[a]))
-    i+=1
 
 
 
@@ -183,10 +176,9 @@ screenameToId = {}
 
 for index, row in users.iterrows():
     x = int(row["twitter_id"])
-    if(G.has_node(x)):
-        screename = row["screename"]
-        Users[x]= Usuarios(id= x, screename = screename)
-        screenameToId[screename]=x
+    screename = row["screename"]
+    Users[x]= Usuarios(id= x, screename = screename)
+    screenameToId[screename]=x
 
 
 for index, row in tweets.iterrows():
@@ -210,9 +202,40 @@ for index, row in tweets.iterrows():
             except:
                 pass
 
+
+###############################################################
+# Se guardan metricas
+###############################################################
 with open("users.csv",'w') as file:
-    file.write("ID;SCREENAME;NTWT;NRT;NMENT\n")
+    file.write(";ID;SCREENAME;NTWT;NRT;NMENT\n")
     for key in Users:
         usuario = Users[key]
-        file.write("%s;%s;%s;%s;%s\n" % (usuario.id,usuario.user,usuario.ntwt,usuario.nrt,usuario.nment))
+        file.write(";%s;%s;%s;%s;%s\n" % (usuario.id,usuario.user,usuario.ntwt,usuario.nrt,usuario.nment))
 
+
+
+
+###############################################################
+# Se imprimen PageRanks
+###############################################################
+
+# Se imprimen los 20 mayores pageranks
+i = 1
+for a in srt:
+    try:
+        screename = str(Users[a].user)
+    except:
+        screename = "NN"
+    print("#%s. %s -> %s. Con %s seguidores. S_Name:%s" % (i, a, pr[a], Cantidad_Seguidores[a],screename))
+    i+=1
+
+
+# Se imprimen los ultimos 20 pageranks
+i = 0
+for a in sr:
+    try:
+        screename = str(Users[a].user)
+    except:
+        screename = "NN"
+    print("#%s. %s -> %s. Con %s seguidores. S_Name:%s" % (N_NODOS - i, a, pr[a], Cantidad_Seguidores[a],screename))
+    i+=1
